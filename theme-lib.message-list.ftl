@@ -7,13 +7,16 @@
 <#assign sorting = http.request.parameters.name.get("sort", "") />
  
 <#-- page size -->
-<#assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number />
-<#if user.registered>
+<#--  Set up page size to exactly 30 posts per page   -->
+<#assign pageSize = 30 />
+
+<#--  We can comment out the code below as there is now a variable that specifies the page size of exactly 30 posts per page.  -->
+<#--  <#if user.registered>
    <#assign pageSizeUser = settings.name.get("layout.messages_per_page_linear") />
    <#if pageSizeUser?number != pageSize?number>
        <#assign pageSize = pageSizeUser />
    </#if>
-</#if>
+</#if>  -->
  
 <#if webuisupport.path.parameters.name.get("label-name")??>
    <#assign label = webuisupport.path.parameters.name.get("label-name").getText() />
@@ -43,6 +46,24 @@
    <#break>
    <#case "replies">
        <#assign orderClause = "ORDER BY replies.count(*) DESC " />
+   <#break>
+   <#--  Added sorting method by post time, from the newest to oldest. Using DESC sort from higher values to lower  -->
+   <#case "time">
+       <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
+   <#break>
+   <#--  Added sorting method by the lowest number of kudos. Calculate the amount of kudos and using ASC sort from lower values to higher  -->
+   <#case "min-kudos">
+       <#assign orderClause = "ORDER BY kudos.sum(weight)" />
+   <#break>
+   <#--  Added sorting method by unanswered questions. Check if the number of messages is 0 and sort from higher to lower   -->
+   <#case "unansw-questions">
+      <#assign whereClause = whereClause + " AND replies.count(*) = 0 " />
+      <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
+   <#break>
+   <#--  Added sorting method by questions with no solution. Check if we have only unsolved questions   -->
+   <#case "nosltn-questions">
+      <#assign whereClause = whereClause + " AND conversation.solved = false " />
+      <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
    <#break>
    <#default>
        <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
@@ -76,6 +97,14 @@
                    <option value="views" <#if sorting == 'views'>selected</#if>>${text.format("theme-lib.community-activity.views")}</option>
                    <option value="replies" <#if sorting == 'replies'>selected</#if>>${text.format("theme-lib.community-activity.replies")}</option>
                    <option value="kudos" <#if sorting == 'kudos'>selected</#if>>${text.format("theme-lib.community-activity.kudos")}</option>
+                   <#--  Added to the dropdown menu sorting by post time, from the newest to oldest  -->
+                   <option value="time" <#if sorting == 'time'>selected</#if>>${text.format("theme-lib.community-activity.time")}</option>
+                    <#--  Added to the dropdown menu sorting by the lowest number of kudos   -->
+                   <option value="min-kudos" <#if sorting == 'min-kudos'>selected</#if>>${text.format("theme-lib.community-activity.min-kudos")}</option>
+                   <#--  Added to the dropdown menu sorting by unanswered questions  -->
+                   <option value="unansw-questions" <#if sorting == 'unansw-questions'>selected</#if>>${text.format("theme-lib.community-activity.unansw-questions")}</option>
+                   <#--  Added to the dropdown menu sorting by questions with no solution   -->
+                   <option value="nosltn-questions" <#if sorting == 'nosltn-questions'>selected</#if>>${text.format("theme-lib.community-activity.nosltn-questions")}</option>
                </select>
                <#if page.interactionStyle=="idea">
                  <@component id="custom.idea.status.label" />
@@ -148,9 +177,10 @@
        <#assign msg_status_icon = "custom-thread-floated" />
        <#assign msg_status_txt = "theme-lib.general.thread-floated" />
    </#if>
+   <#--  Changed the name of class for solved threads  -->
    <#if msg.conversation.solved>
-       <#assign solved = "custom-thread-solved" />
-       <#assign msg_status_icon = "custom-thread-solved" />
+       <#assign solved = "task-thread-solved" />
+       <#assign msg_status_icon = "task-thread-solved" />
        <#assign msg_status_txt = "theme-lib.general.thread-solved" />
    </#if>
    <#if !msg.user_context.read>

@@ -121,12 +121,24 @@
     min-width: min-content;
 }
 
+/* Divided elements into 2 rows with 3 elements each on section below 900px screen size */
+@media (max-width: 900px) {
+  .benefits-content-list-element {
+    width: calc(100% / 3);
+  } 
+}
+
 .benefits-content-list-icon {
     padding-bottom: 10px;
 }
 
 .benefits-content-list-icon > img {
     height: 60px;
+}
+
+/* Made icons a little bit bigger on hover */
+.benefits-content-list-icon > img:hover {
+  transform: scale(1.1);
 }
 
 .benefits-content-list-description, .benefits-content-list-description-blue {
@@ -219,6 +231,23 @@
    font-weight: 300;
    justify-content: center;
 }
+/* add styles for map button*/
+.map {
+  margin-top: 20px;
+}
+
+.map > a,
+.map > a:hover,
+.map > a:focus  {
+  padding: 20px 40px;
+  background-color: rgb(120 58 178);
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  
+}
 
 /*Join page - Testimonials component*/
 
@@ -309,9 +338,10 @@
    text-align: center;
 }
 
+/* Change width for carousel calc to make elements fit the container  */
 #testimonials-carousel > .carousel-indicators > li {
     display: inline-block;
-    width: calc(100% / 4 - 50px);
+    width: calc(100% / 5 - 50px);
     height: 0.6rem;
     margin: 20px;
     text-indent: -999px;
@@ -321,9 +351,10 @@
     border-radius: 0px;
 }
 
+/* Change width for carousel calc to make active elements fit the container  */
 #testimonials-carousel .carousel-indicators .active {
     display: inline-block;
-    width: calc(100% / 4 - 50px);
+    width: calc(100% / 5 - 50px);
     height: 0.6rem;
     margin: 20px;
     text-indent: -999px;
@@ -802,8 +833,8 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
   <img src="https://community.dynatrace.com/html/assets/wave-blue-2.png">
 </div>
 
-<div class="map-wrapper">
-  <div class="map-content">
+<div class="map-wrapper" >
+  <div class="map-content" id="map-content">
     <div class="map-content-title">
       <div class="map-content-title-light">
         <p>Become a part of <b>global community</b></p>
@@ -840,6 +871,8 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
     <li data-target="#testimonials-carousel" data-slide-to="1"></li>
     <li data-target="#testimonials-carousel" data-slide-to="2"></li>
     <li data-target="#testimonials-carousel" data-slide-to="3"></li>
+    <li data-target="#testimonials-carousel" data-slide-to="4"></li> 
+    <!-- Add another element to the carousel -->
   </ol>
 
   <div class="carousel-inner">
@@ -926,6 +959,27 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
         </div>
      </div>
     </div>
+
+    <div class="item">
+      <div class="testimonials-quote-wrap">
+       <div class="testimonials-quote-element">
+         <div class="testimonials-quote">
+           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur rem ea adipisci, in facilis dolor asperiores dolorum. Tempore atque, a nobis architecto nam quasi maiores mollitia laborum similique itaque aspernatur?</p>
+           <img class="testimonial-quote-mark-1" src="https://community.dynatrace.com/html/assets/quote_black.png">
+           <img class="testimonial-quote-mark-2" src="https://community.dynatrace.com/html/assets/quote_black.png">
+         </div>
+       </div>
+         <div class="testimonials-picture">
+           <div class="testimonials-picture-avatar">
+             <img src="https://media.istockphoto.com/id/1277996375/photo/happy-young-woman-studio-portrait.jpg?s=612x612&w=0&k=20&c=GrJyXLoamxUDaLxgvt9TJtoM5BdHu6u99VCGM_w-2o4="></img>
+           </div>
+           <div class="testimonials-picture-name">
+             <h2>Adriana Mustanding</h2>
+             <p>SEO</p>
+           </div>
+         </div>
+      </div>
+     </div>
 
   <a class="left carousel-control" href="#testimonials-carousel" data-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -1034,6 +1088,33 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
     </div>
   </div>
 </div>
+
+<!-- Add a script adding a new div with button  -->
+<script>
+  function mapBtn() {
+    // Create a new element 
+      let mapContent = document.querySelector('.map-content');
+      let div = document.createElement('div');
+      let mapLink = document.createElement('a');
+    // Add a class for div
+      div.className = "map";
+    // Add a link to the map
+      mapLink.href = 'https://www.google.com/maps/place/Dynatrace+Polska/@54.39927,18.57639,15z/data=!4m6!3m5!1s0x46fd7528f4d428df:0x6af9edc74b6f5fa2!8m2!3d54.39927!4d18.57639!16s%2Fg%2F11b620zfdn';
+    // Add _blank to open the map in a new window or tab
+      mapLink.target = "_blank";
+      mapLink.innerText = 'Show on map!';
+    // Add button to the div
+      div.append(mapLink);
+    // Add map content to the div
+      mapContent.append(div);
+    }
+
+    // Function call on page load
+    window.addEventListener('load', (event) => {
+      mapBtn();
+    });
+</script>
+
 
 </body>
 </html>
